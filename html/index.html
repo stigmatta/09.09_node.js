@@ -4,42 +4,81 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        form {
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            padding-inline: 1em;
+            padding-block: 2em;
+            border-radius: 1em;
+            border: solid .1em black;
+            width: fit-content;
+            margin-inline: auto;
+            margin-top: 5em;
+        }
+
+        input {
+            width: 20em;
+            margin-block: 1em;
+            height: 2em;
+            background-color: rgb(248, 243, 243);
+        }
+
+        button {
+            align-self: flex-end;
+            font-size: 1.2em;
+        }
+    </style>
+    <script>
+        window.onload = function() {
+            var login = document.getElementById('email');
+            var password = document.getElementById('password');
+            var form = document.querySelector('form');
+            var container = document.getElementById('cont');
+
+            form.addEventListener('submit', function(event) {
+                event.preventDefault(); 
+                var data = JSON.stringify({
+                    login: login.value,
+                    password: password.value
+                });
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/data', true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+
+                xhr.onload = function() {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        var response = JSON.parse(xhr.responseText);
+                        form.style.display = 'none';
+                        container.innerHTML = response.message;
+                    } else {
+                        console.log('Request failed');
+                    }
+                };
+
+                xhr.onerror = function() {
+                    console.log('Request error');
+                };
+
+                xhr.send(data);
+            });
+        };
+    </script>
 </head>
-<style>
-    form {
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-    padding-inline:1em ;
-    padding-block: 2em;
-    border-radius: 1em;
-    border: solid .1em black;
-    width: fit-content;
-    margin-inline: auto;
-    margin-top: 5em;
-    }
-
-    input{
-        width: 20em;
-        margin-block: 1em;
-        height: 2em;
-        background-color: rgb(248, 243, 243);
-    }
-
-    button{
-        align-self: flex-end;
-        font-size: 1.2em;
-    }
-</style>
 <body>
     <form>
         <label for="email">Email</label>
-        <input name="email" type="email">
+        <input id="email" name="email" type="email">
 
         <label for="password">Password</label>
-        <input name="password" type="password">
+        <input id="password" name="password" type="password">
 
-        <button type="submit">OK</button>
+        <button id="button" type="submit">OK</button>
+
     </form>
+
+    <span id="cont"></span>
 </body>
 </html>
